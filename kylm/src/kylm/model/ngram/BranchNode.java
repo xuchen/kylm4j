@@ -15,7 +15,7 @@ public final class BranchNode extends NgramNode {
 		private BranchNode root = null;
 		private int pos = 0;
 		private int last = -1;
-		
+
 		public SkipIterator(BranchNode branchNode) {
 			root = branchNode;
 		}
@@ -42,22 +42,27 @@ public final class BranchNode extends NgramNode {
 			root.children.set(last, null);
 			root.childCount--;
 		}
-		
+
 	}
-	
+
 	/**
 	 * For serialization
 	 */
 	private static final long serialVersionUID = 435179356854434311L;
-	
+
 	protected float boscore = 0;
 	protected Vector<NgramNode> children = null;
 	protected int childCount;
-	
+
 	public BranchNode(int id, NgramNode parent) {
 		super(id, parent);
 	}
-	
+
+	@Override
+	public String toString() {
+		return id+"("+score+"/"+boscore+")"+parent;
+	}
+
 	@Override
 	public NgramNode getChild(int id, int add) {
 		NgramNode child = null;
@@ -97,22 +102,22 @@ public final class BranchNode extends NgramNode {
 		}
 		return child;
 	}
-	
+
 	@Override
 	public boolean hasChildren() {
 		return children != null;
 	}
-	
+
 	@Override
 	public float getBackoffScore() {
 		return boscore;
 	}
-	
+
 	@Override
 	public void setBackoffScore(float backoff) {
 		boscore = backoff;
 	}
-	
+
 	@Override
 	protected void finalize() throws Throwable {
 		try {
@@ -125,7 +130,7 @@ public final class BranchNode extends NgramNode {
 			super.finalize();
 		}
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		try {
@@ -138,18 +143,18 @@ public final class BranchNode extends NgramNode {
 		} catch(Exception e) { }
 		return false;
 	}
-	
+
 	@Override
 	public void setChildren(Vector<NgramNode> newChildren) {
 		if(parent == null) {
 			Collections.fill(children, null);
 			for(NgramNode child : newChildren)
 				children.set(child.getId(), child);
-		} else 
+		} else
 			children = new Vector<NgramNode>(newChildren);
 		childCount = newChildren.size();
 	}
-	
+
 	///////////////////////////////
 	// methods for serialization //
 	///////////////////////////////
@@ -159,7 +164,7 @@ public final class BranchNode extends NgramNode {
 		if(children == null)
 			out.writeInt(0);
 		else {
-			if(children.size() == childCount) 
+			if(children.size() == childCount)
 				out.writeInt(children.size()*-1);
 			else {
 				out.writeInt(children.size());
@@ -215,10 +220,10 @@ public final class BranchNode extends NgramNode {
 		else
 			return new SkipIterator(this);
 	}
-	
+
 	@Override
 	public int getChildCount() {
 		return childCount;
 	}
-	
+
 }

@@ -43,7 +43,7 @@ public class KylmTextUtils {
 		for(int i = 0; i < ret.length; ret[i] = string.substring(i, ++i));
 		return ret;
 	}
-	
+
 	/**
 	 * join an array together with string glue between the words
 	 * @param glue The string to be added between the words
@@ -58,7 +58,7 @@ public class KylmTextUtils {
 			sb.append(glue).append(arr[i]);
 		return sb.toString();
 	}
-	
+
 	/**
 	 * join an array together with string glue between the words
 	 * @param glue The string to be added between the words
@@ -94,5 +94,20 @@ public class KylmTextUtils {
 			sb.append(glue).append(arr[i]);
 		return sb.toString();
 	}
-	
+
+	/**
+	 * Concatenates an array of strings, using whitespaces as delimiters.
+	 *
+	 * @param ss array of strings
+	 * @return concatenated string
+	 */
+	public static String concatWithSpaces(String[] ss) {
+		String s = "";
+
+		if (ss.length > 0) s += ss[0];
+		for (int i = 1; i < ss.length; i++) s += " " + ss[i];
+
+		return s;
+	}
+
 }

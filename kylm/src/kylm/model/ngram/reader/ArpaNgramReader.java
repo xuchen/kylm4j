@@ -54,7 +54,7 @@ public class ArpaNgramReader extends NgramReader {
 
 	public NgramLM read(BufferedReader br) throws IOException {
 
-		NgramLM lm = new NgramLM(-1);
+		NgramLM lm = new NgramLM(0);
 
 		String s;
 		// get parameters
@@ -87,7 +87,7 @@ public class ArpaNgramReader extends NgramReader {
 			else if(s.equals("[classmap]"))
 				lm.setClassMap(readClassMap(br, lm));
 		}
-		final int n = lm.getN();
+		int n = lm.getN();
 
 		// if the data has reached the end there's a problem
 		if(s == null)
@@ -97,7 +97,11 @@ public class ArpaNgramReader extends NgramReader {
 
 		// read the n-gram counts
 		// TODO: more robust error checking
-		Pattern pat = Pattern.compile("ngram (\\d+)=(\\d+)");
+		/*
+		 *  X. Yao. 2010-07-01: make the pattern matching work for irstlm
+		 *  which provides not that standard headers.
+		 */
+		Pattern pat = Pattern.compile("ngram\\s*(\\d+)=\\s*(\\d+)");
 		Matcher m = null;
 		Vector<Integer> counts = new Vector<Integer>();
 		while((s = br.readLine()) != null) {
@@ -107,8 +111,10 @@ public class ArpaNgramReader extends NgramReader {
 			counts.add(Integer.parseInt(m.group(2)));
 		}
 		// check consistency
-		if(n == 0)
+		if(n == 0) {
 			lm.setN(counts.size());
+			n = lm.getN();
+		}
 		else if (lm.getN() != counts.size())
 			throw new IllegalArgumentException("Header n ("+lm.getN()+
 					") doesn't match number of counts ("+counts.size()+")");
