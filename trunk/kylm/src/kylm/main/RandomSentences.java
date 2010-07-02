@@ -22,7 +22,7 @@ public class RandomSentences {
 		KylmConfigUtils config = new KylmConfigUtils(
 				"RandomSentences"+br+
 				"A program to generate random sentences given an Ngram lanugage model"+br+
-		"Example: java -num 10 -arpa model.arpa");
+		"Example: java -cp kylm.jar kylm.main.RandomSentences -num 10 -arpa model.arpa");
 
 		// Input format options
 		config.addEntry("arpa", KylmConfigUtils.BOOLEAN_TYPE, true, true, "model in arpa format");

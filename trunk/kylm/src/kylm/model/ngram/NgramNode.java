@@ -35,22 +35,22 @@ import java.util.Vector;
  *
  */
 public class NgramNode implements Serializable, Iterable<NgramNode> {
-	
+
 	private static final long serialVersionUID = 7981382079826823765L;
 
 	public static final int ADD_NONE = 0;
 	public static final int ADD_LEAF = 1;
 	public static final int ADD_BRANCH = 2;
-	
+
 	private static final float diff = 0.0001f;
 
 	public static final float TRIM_SCORE = 9999.09f;
-	
+
 	protected int id = -1;
 	protected int count = 0;
 	protected float score = 0;
 	protected NgramNode parent = null;
-	
+
 	public static class NgramNodeIdComparator implements Comparator<NgramNode> {
 		@Override
 		public int compare(NgramNode o1, NgramNode o2) {
@@ -89,7 +89,7 @@ public class NgramNode implements Serializable, Iterable<NgramNode> {
 			throw new IllegalArgumentException("Cannot add a child for a leaf node");
 		return null;
 	}
-	
+
 //	/**
 //	 * Get the vector of children
 //	 * @return The vector
@@ -97,7 +97,7 @@ public class NgramNode implements Serializable, Iterable<NgramNode> {
 //	protected Vector<NgramNode> getChildren() {
 //		throw new IllegalArgumentException("Leaf nodes have no children");
 //	}
-	
+
 	/**
 	 * Return whether this node has children or not
 	 */
@@ -120,7 +120,11 @@ public class NgramNode implements Serializable, Iterable<NgramNode> {
 		else
 			return parent.getFallback().getChild(id);
 	}
-	
+
+	public String toString() {
+		return id+"("+score+")"+parent;
+	}
+
 	public final NgramNode getParent() { return parent; }
 	public final void setParent(NgramNode parent) { this.parent = parent; }
 	public final int getId() { return id; }
@@ -128,8 +132,8 @@ public class NgramNode implements Serializable, Iterable<NgramNode> {
 	public final int getCount() { return count; }
 	public final void setCount(int count) { this.count = count; }
 	public final float getScore() { return score; }
-	public final void setScore(float score) { 
-		this.score = score; 
+	public final void setScore(float score) {
+		this.score = score;
 	}
 	public float getBackoffScore() {
 		return Float.NaN;
@@ -137,7 +141,7 @@ public class NgramNode implements Serializable, Iterable<NgramNode> {
 	public void setBackoffScore(float backoff) {
 		throw new IllegalArgumentException("Leaf nodes have no backoff score");
 	}
-	
+
 	@Override
 	protected void finalize() throws Throwable {
 		try {
@@ -147,7 +151,7 @@ public class NgramNode implements Serializable, Iterable<NgramNode> {
 			super.finalize();
 		}
 	}
-	
+
 	////////////////////
 	// equal function //
 	////////////////////
@@ -170,7 +174,7 @@ public class NgramNode implements Serializable, Iterable<NgramNode> {
 		} catch(Exception e) { }
 		return false;
 	}
-	
+
 	///////////////////////////////
 	// methods for serialization //
 	///////////////////////////////

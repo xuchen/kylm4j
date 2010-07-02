@@ -112,7 +112,7 @@ public class NgramLM extends LanguageModel implements Serializable {
 				wordEnts[i] += classEnts[i];
 				mids[i+1] = classMap.getWordClass(idx);
 			}
-		} else 
+		} else
 			mids = iids;
 		int idx;
 		sentHits++;
@@ -133,7 +133,7 @@ public class NgramLM extends LanguageModel implements Serializable {
 				simpleEnts[i] += context.getBackoffScore();
 				context = context.getFallback();
 				if(context == null)
-					throw new IllegalArgumentException("Could not find word in unigram vocabulary.");			
+					throw new IllegalArgumentException("Could not find word in unigram vocabulary.");
 			}
 			// add the level that we got a hit at
 			// System.out.println(isInVocab(idx)?lev:0);
@@ -177,6 +177,56 @@ public class NgramLM extends LanguageModel implements Serializable {
 		throw new IllegalArgumentException("could not find n-gram");
 	}
 
+	public float getSentenceProb(String[] sent) {
+		float prob = 0.0f;
+		// get the sentence IDs
+		int[] iids = getSentenceIds(sent);
+
+		// check to make sure that nodes exist for every id
+		for(int i = 0; i < iids.length; i++)
+			if(root.getChild(iids[i]) == null)
+				iids[i] = this.findUnknownId(vocab.getSymbol(iids[i]));
+
+		// convert to classes
+//		int[] mids;
+//		if(classMap != null) {
+//			mids = new int[iids.length];
+//			mids[0] = classMap.getWordClass(iids[0]);
+//			for(int i = 0; i < wordEnts.length; i++) {
+//				int idx = iids[i+1];
+//				classEnts[i] = classMap.getWordProb(idx);
+//				wordEnts[i] += classEnts[i];
+//				mids[i+1] = classMap.getWordClass(idx);
+//			}
+//		} else
+//			mids = iids;
+		int idx;
+
+		// start with the terminal symbol as the context
+		NgramNode context = root.getChild(0), child;
+
+		for(int i = 0; i < iids.length-1; i++) {
+			idx = iids[i+1];
+			// first, fall back to a node that has children
+			while(!context.hasChildren()) {
+				context = context.getFallback();
+			}
+			// then, fall back to a node that actually can predict the word
+			while((child = context.getChild(idx)) == null) {
+				// add the fallback penalty
+				prob += context.getBackoffScore();
+				context = context.getFallback();
+				if(context == null)
+					throw new IllegalArgumentException("Could not find word in unigram vocabulary.");
+			}
+			// add the score
+			prob += child.score;
+			context = child;
+		}
+
+		return prob;
+	}
+
 	@Override
 	public void trainModel(Iterable<String[]> sl) throws IOException {
 		if(debug > 0)
@@ -190,7 +240,7 @@ public class NgramLM extends LanguageModel implements Serializable {
 		if(!closed) {
 			closed = true;
 			for(int i = 2; i <= ukModelCount+1; i++)
-				if(root.getChild(i) != null) 
+				if(root.getChild(i) != null)
 					closed = false;
 		}
 		// train the unknown models
@@ -200,7 +250,7 @@ public class NgramLM extends LanguageModel implements Serializable {
 				ukw.add(new LinkedList<String>());
 			for(String s : ukWords)
 				ukw.get(findUnknownId(s)-2).add(KylmTextUtils.join(" ", KylmTextUtils.splitChars(s)));
-			for(int i = 0; i < ukModels.length; i++) 
+			for(int i = 0; i < ukModels.length; i++)
 				ukModels[i].trainModel(new TextArraySentenceReader(ukw.get(i).toArray(new String[0])));
 		}
 		if(debug > 0)
@@ -226,14 +276,14 @@ public class NgramLM extends LanguageModel implements Serializable {
 		NgramNode node;
 		int len, start;
 		// count the unknown words for later ukModel training
-		if(ukModels != null) 
+		if(ukModels != null)
 			ukWords = new HashSet<String>();
 
 		int count = 0;
 		// cycle through every sentence
 		for(String[] sent : sl) {
 			// output progress
-			if(debug > 0 && ++count % 10000 == 0) 
+			if(debug > 0 && ++count % 10000 == 0)
 				System.err.print(count % 1000000==0?count:".");
 			// skip empty sentences
 			if(sent.length == 0)
