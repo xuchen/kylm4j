@@ -7,11 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
 
-import kylm.model.LanguageModel;
 import kylm.model.ngram.NgramLM;
 import kylm.model.ngram.reader.ArpaNgramReader;
 import kylm.model.ngram.reader.NgramReader;
@@ -66,10 +62,12 @@ public class SentenceProb {
 		TextStreamSentenceReader tssl = new TextStreamSentenceReader(is);
 
 		for(String[] sent : tssl) {
+			sent = KylmTextUtils.addStartEnd(sent);
 			float prob = lm.getSentenceProb(sent);
 			System.out.println("Log likelihood of sentence \""+KylmTextUtils.concatWithSpaces(sent)+
 					"\": "+prob+"("+prob/sent.length+")");
 		}
 	}
+
 
 }
