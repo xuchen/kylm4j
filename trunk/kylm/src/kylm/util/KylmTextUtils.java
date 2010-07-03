@@ -110,4 +110,23 @@ public class KylmTextUtils {
 		return s;
 	}
 
+
+	/**
+	 * Add <s> and </s> symbol to the start and end of a sentence, if not present
+	 */
+	public static String[] addStartEnd(String[] sent) {
+		String start = "<s>", end = "</s>";
+		int len = sent.length;
+		if (sent == null) return null;
+		if (sent[0].equals(start) && sent[len-1].equals(end))
+			return sent;
+		else {
+			String[] newSent = new String[len+2];
+			System.arraycopy(sent, 0, newSent, 1, len);
+			newSent[0] = start;
+			newSent[len+1] = end;
+			return newSent;
+		}
+	}
+
 }
