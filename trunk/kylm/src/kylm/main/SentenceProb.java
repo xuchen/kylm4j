@@ -62,7 +62,8 @@ public class SentenceProb {
 		TextStreamSentenceReader tssl = new TextStreamSentenceReader(is);
 
 		for(String[] sent : tssl) {
-			sent = KylmTextUtils.addStartEnd(sent);
+			// looks like getSentenceIds() adds <s> and </s> automatically
+			//sent = KylmTextUtils.addStartEnd(sent);
 			float prob = lm.getSentenceProb(sent);
 			System.out.println("Log likelihood of sentence \""+KylmTextUtils.concatWithSpaces(sent)+
 					"\": "+prob+"("+prob/sent.length+")");
