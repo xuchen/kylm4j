@@ -177,6 +177,31 @@ public class NgramLM extends LanguageModel implements Serializable {
 		throw new IllegalArgumentException("could not find n-gram");
 	}
 
+	/**
+	 * Get the perplexity of a sentence
+	 * @param sent The string of words
+	 * @return PP(sent)
+	 */
+	public float getSentencePerplexity(String[] sent) {
+
+		return getSentenceProb(sent)/-(sent.length+2);
+	}
+
+	/**
+	 * Get the log10-likelihood of a sentence normalized with length.
+	 * This value in fact equals to the perplexity of a sentence
+	 * @param sent
+	 * @return PP(sent)
+	 */
+	public float getSentenceProbNormalized(String[] sent) {
+		return getSentencePerplexity(sent);
+	}
+
+	/**
+	 * Get the log10-likelihood of a sentence
+	 * @param sent The string of words
+	 * @return log10(P(sent))
+	 */
 	public float getSentenceProb(String[] sent) {
 		float prob = 0.0f;
 		// get the sentence IDs
