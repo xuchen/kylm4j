@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 package kylm.model.ngram.reader;
 
 import java.io.*;
+import java.util.zip.GZIPInputStream;
 
 import kylm.model.ngram.NgramLM;
 
@@ -34,9 +35,15 @@ public abstract class NgramReader {
 	 * @throws IOException If the file could not be written to
 	 */
 	public NgramLM read(String fileName) throws IOException {
-		return read(new FileInputStream(fileName));
+		// X.Yao, 2010-07-22, make it able to read gzip-compressed file
+	    FileInputStream fin = new FileInputStream(fileName);
+		String file = fileName.toLowerCase();
+		if (file.endsWith(".gz") || file.endsWith(".gzip"))
+			return read(new GZIPInputStream(fin));
+		else
+			return read(fin);
 	}
-	
+
 	/**
 	 * Read a language model from an input stream
 	 * @param is The input stream to read the model from
@@ -44,5 +51,5 @@ public abstract class NgramReader {
 	 * @throws IOException If the file could not be read from
 	 */
 	public abstract NgramLM read(InputStream is) throws IOException;
-	
+
 }
