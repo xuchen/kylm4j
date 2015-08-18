@@ -1,0 +1,1 @@
+This is an attempt to forge [Graham Neubig](http://www.phontron.com/)'s [Kyoto Language Modeling toolkit](http://www.phontron.com/kylm) (Kylm). It's still under development and the final objective is to provide a set of Java APIs to access language models in either ARPA or binary format.
